@@ -7,11 +7,11 @@ namespace TokenTestingBlazor.Client
         /// <summary>
         /// URI of the CosmosDB instance being accessed
         /// </summary>
-        static readonly string endpoint = "YourCosmosDBURI";
-        static readonly Uri baseUri = new Uri(endpoint);
+        readonly string endpoint;
+        readonly Uri baseUri;
 
 
-        //These are currently temporary (Not really used)
+        //These are currently temporary
         static readonly string databaseId = "test_db";
         static readonly string collectionId = "messages";
         static readonly string documentId = "0";
@@ -20,9 +20,11 @@ namespace TokenTestingBlazor.Client
 
         private HttpClient client;
         
-        public DatabaseAPIService()
+        public DatabaseAPIService(IConfiguration Config)
         {
             client = new HttpClient();
+            endpoint = Config["Azure:cosmos_uri"] ?? throw new ArgumentNullException();
+            baseUri = new Uri(endpoint);
         }
 
         /// <summary>

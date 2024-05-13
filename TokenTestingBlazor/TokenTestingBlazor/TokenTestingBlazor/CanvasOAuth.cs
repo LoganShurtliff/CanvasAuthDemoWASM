@@ -13,20 +13,17 @@ namespace TokenTestingBlazor
     /// </summary>
     public class CanvasOAuth
     {
-        /// <summary>
-        /// Canvas OAuth Client ID
-        /// </summary>
-        private readonly string oAuthClientID = "CanvasOAuthClientID";
-        
-        /// <summary>
-        /// Canvas Redirect URI (Change based on domain)
-        /// </summary>
-        private readonly string redirectURI = "http://localhost:3000/api/auth/callback/Canvas";
+        private readonly string oAuthClientID;
+        private readonly string redirectURI;
+        private readonly string cosmosURI;
 
         private readonly HttpClient client;
-        public CanvasOAuth() 
+        public CanvasOAuth(IConfiguration Config) 
         {
-             client = new HttpClient();
+            client = new HttpClient();
+            oAuthClientID = Config["Canvas:client_id"] ?? throw new ArgumentNullException(nameof(oAuthClientID));
+            redirectURI = Config["Canvas:redirect_uri"] ?? throw new ArgumentNullException(nameof(redirectURI));
+            cosmosURI = Config["Azure:cosmos_uri"] ?? throw new ArgumentNullException(nameof(redirectURI));
         }
 
         /// <summary>
@@ -68,9 +65,7 @@ namespace TokenTestingBlazor
         /// <returns>OAuth Client Secret</returns>
         public async Task<string> GetClientSecretAsync(string token)
         {
-            //CosmosDB endpoint
-            var endpoint = "YourCosmosDBEndpoint";
-            var baseUri = new Uri(endpoint);
+            var baseUri = new Uri(cosmosURI);
 
             //Microsoft Docs here are wrong, use the location of the resource being accessed, not the location of the endpoint
             

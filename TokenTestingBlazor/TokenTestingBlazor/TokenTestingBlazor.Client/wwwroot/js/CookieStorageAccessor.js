@@ -6,5 +6,5 @@ export function get(key) {
 }
 
 export function set(key, value, domain = "http://localhost:3000") {
-    document.cookie = `${key}=${value};domain=${domain};path=/`;
+    document.cookie = `${key}=${value};domain=${domain}`;
 }

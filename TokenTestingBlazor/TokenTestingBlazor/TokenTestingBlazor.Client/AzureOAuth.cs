@@ -18,28 +18,32 @@ namespace TokenTestingBlazor.Client
         /// <summary>
         /// The Directory (tenant) ID of the registered Entra ID application
         /// </summary>
-        private static string tenant = "YourAzureTenantID";
+        private static string tenant;
         
         /// <summary>
         /// The Application (client) ID of the registered Entra ID application
         /// </summary>
-        private static string client_id = "YourApplicationClientID";
+        private static string client_id;
         
         /// <summary>
         /// The URI redirected to after authentication
         /// </summary>
-        private static string redirect_uri = "http://localhost:3000/callback"; //Change if using a different domain
+        private static string redirect_uri;
 
         /// <summary>
         /// The URI of the CosmosDB Instance
         /// </summary>
-        private static string cosmosURI = "YourCosmosDBURI";
+        private static string cosmosURI;
 
         private HttpClient client;
 
-        public AzureOAuth() 
+        public AzureOAuth(IConfiguration Config) 
         {
             client = new HttpClient();
+            tenant = Config["Azure:tenant"] ?? throw new ArgumentNullException();
+            client_id = Config["Azure:client_id"] ?? throw new ArgumentNullException();
+            redirect_uri = Config["Azure:redirect_uri"] ?? throw new ArgumentNullException();
+            cosmosURI = Config["Azure:cosmos_uri"] ?? throw new ArgumentNullException();
         }
 
 

@@ -8,6 +8,7 @@
 @inject DatabaseAPIService db
 @inject TokenTestingBlazor.Client.CookieStorageAccessor cookie
 @inject NavigationManager Nav
+@inject IConfiguration Config
 
 
 @code {
@@ -50,19 +51,18 @@
         } 
         else
         {
-            
-            
+
+
             Console.WriteLine("Auth Code or Response State is Null!");
         }
     }
 
     public void BeginCanvasOAuth()
     {
-        string redirectURI = "http://localhost:3000/api/auth/callback/Canvas"; // Change this if using a different domain
-        string endpoint = "https://davistech.instructure.com/login/oauth2/auth?"; //Change if not using the Davis Tech domain
-        string oAuthClientID = "YourCanvasOAuthClientID"; //Canvas OAuth Client ID
-
-
+        string redirectURI = Config["Canvas:redirect_uri"];
+        string endpoint = Config["Canvas:auth_uri"];
+        string oAuthClientID = Config["Canvas:client_id"];
+        
         endpoint += $"client_id={oAuthClientID}";
         endpoint += "&response_type=code";
         endpoint += $"&redirect_uri={redirectURI}";

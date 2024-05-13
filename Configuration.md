@@ -9,54 +9,9 @@ Various things need to be configured in this project, including:
 - Azure Application Client ID
 - Azure Application Redirect URI
 - Azure CosmosDB URI
-- Domain of host
 
-## Locations to Configuration
+All of these values need to be configured in two location:
 
-#### Canvas OAuth Client ID
+`TokenTestingBlazor.Client/wwwroot/appsettings.json` for the Client
 
-`CanvasOAuth.cs`
-
-`Pages/Callback.razor`
-
-#### Canvas Redirect URI
-
-`Pages/Callback.razor`
-
-`CanvasOAuth.cs`
-
-#### Canvas Auth URI (If using different Canvas Domain)
-
-`Pages/Callback.razor`
-
-`CanvasOAuth.cs`
-
-#### Azure tenant ID
-
-`AzureOAuth.cs`
-
-
-
-#### Azure Application Client ID
-
-`AzureOAuth.cs`
-
-
-
-#### Azure Application Redirect URI
-
-`AzureOAuth.cs`
-
-
-
-#### Azure CosmosDB URI
-
-`AzureOAuth.cs`
-
-`DatabaseAPIService.cs`
-
-`CanvasOAuth.cs`
-
-#### Host Domain
-
-`Pages/CanvasCallback.razor`
+`TokenTestingBlazor/appsettings.json` for the Server
