@@ -1,0 +1,65 @@
+﻿@page "/api/auth/callback/Canvas"
+@*This is the callback page after Canvas Authentication*@
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@using System.Text.Json
+@using TokenTestingBlazor.Client.Models
+
+@inject HttpClient client
+@inject CookieStorageAccessor cookie
+
+<h3>CanvasCallback</h3>
+
+<p>@Response</p>
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "code")]
+    public string? AuthCode { get; set; }
+
+    public string? Response { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("Callback page initialized async");
+        string AzureToken = await cookie.GetValueAsync<string>("access_token");
+        Console.WriteLine("Cookie has been accessed");
+        if (AzureToken != null)
+        {
+            if (AuthCode != null)
+            {
+                try
+                {
+                    //Configure this endpoint to whatever domain this is running on
+                    var apiEndpoint = "http://localhost:3000/api/auth/getToken?code=" + AuthCode;
+
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Add("AzureToken", AzureToken);
+
+                    var response = await client.GetAsync(apiEndpoint);
+
+                    var Token = JsonSerializer.Deserialize<CanvasTokenDTO>(response.Content.ReadAsStream());
+                    Console.WriteLine("Token" + Token);
+                    await cookie.SetValueAsync<string>("canvas_access_token", Token.access_token); //These cookies have a path of /api/auth/callback becuase it puts it in the parent directory (Setting the cookie domain / path isn't working for some reason) 
+                    await cookie.SetValueAsync<string>("canvas_refresh_token", Token.refresh_token); //A fix for this is to use a path in the root directory, eg /CanvasCallback so they are scoped to the entire domain
+                    Response = "Canvas Token Aquired! Check your cookies.";
+                }
+                catch (Exception ex)
+                {
+                    Response = ex.Message;
+                }
+            }
+            else
+            {
+                Response = "This page has been accessed in error!";
+            }
+        }
+        else
+        {
+            Response = "This page has been accessed in error!";
+        }
+
+        
+        
+    }
+}

@@ -1,0 +1,73 @@
+﻿@page "/callback"
+@*This page is the callback page after Azure Authentication*@
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@using TokenTestingBlazor.Client.Models
+
+@inject AzureOAuth auth
+@inject DatabaseAPIService db
+@inject TokenTestingBlazor.Client.CookieStorageAccessor cookie
+@inject NavigationManager Nav
+
+
+@code {
+
+    public TokenDTO? Token { get; set; }
+
+    /// <summary>
+    /// Supplied by the Microsoft Callback - Contains the Authorization Code that can be exchanged for the Access Token
+    /// </summary>
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "code")]
+    public string? AuthCode { get; set; }
+
+    /// <summary>
+    /// Supplied by the Microsoft Callback - Contains the verification of the PCKE used in the authorization call 
+    /// </summary>
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "state")]
+    public string? ResponseState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthCode != null && ResponseState != null)
+        {
+            try 
+            {
+                Token = await auth.GetAccessToken(AuthCode, ResponseState);
+
+                if (Token.access_token != null && Token.refresh_token != null)
+                {
+                    await cookie.SetValueAsync<string>("access_token", Token.access_token);
+                    await cookie.SetValueAsync<string>("refresh_token", Token.refresh_token);
+                    BeginCanvasOAuth();
+                }
+            } 
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        } 
+        else
+        {
+            
+            
+            Console.WriteLine("Auth Code or Response State is Null!");
+        }
+    }
+
+    public void BeginCanvasOAuth()
+    {
+        string redirectURI = "http://localhost:3000/api/auth/callback/Canvas"; // Change this if using a different domain
+        string endpoint = "https://davistech.instructure.com/login/oauth2/auth?"; //Change if not using the Davis Tech domain
+        string oAuthClientID = "YourCanvasOAuthClientID"; //Canvas OAuth Client ID
+
+
+        endpoint += $"client_id={oAuthClientID}";
+        endpoint += "&response_type=code";
+        endpoint += $"&redirect_uri={redirectURI}";
+
+        Nav.NavigateTo(endpoint);
+    }
+
+}

@@ -1,0 +1,24 @@
+﻿@page "/database"
+@*This page is currently for testing, not actually used*@
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@inject CookieStorageAccessor cookie
+@inject NavigationManager Nav
+
+<h3>AccessDatabase</h3>
+
+<p>@Token</p>
+
+@code {
+    public string? Token { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Token = await cookie.GetValueAsync<string>("access_token");
+        
+        if (Token == null)
+        {
+            Nav.NavigateTo("/test");
+        }
+    }
+}
