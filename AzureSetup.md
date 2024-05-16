@@ -7,7 +7,7 @@ Steps to setup in Azure -
 I. CosmosDB
 
 1. Create a CosmosDB instance
-2. Copy the instance URI and configure that in both `DatabaseAPIService.cs` and `AzureOAuth.cs`
+2. Copy the instance URI and configure that in `appsettings.json` (See [Configuration Page](Configuration.md))
 3. In the CosmosDB instance under Settings -> CORS add the domain of the site to the list of allowed origins (e.g. "http://localhost:3000")
 4. Configure Permissions
 	
@@ -16,7 +16,7 @@ I. CosmosDB
 	
 	A. Open a new Azure Command Line
 	
-	B. Run `code .` to open a new file editor
+	B. Run `code .` to open a new file editor (Replace "." with the file name of the file you want to create)
 	
 	C. In a new file create `role-definition-rw.json` (see below)
 	
