@@ -5,10 +5,10 @@
 @using TokenTestingBlazor.Client.Models
 
 @inject AzureOAuth auth
-@inject DatabaseAPIService db
-@inject TokenTestingBlazor.Client.CookieStorageAccessor cookie
+@inject CookieStorageAccessor cookie
 @inject NavigationManager Nav
 @inject IConfiguration Config
+@inject CanvasAuthAccessor canvasAuthAPI
 
 
 @code {
@@ -37,11 +37,11 @@
             {
                 Token = await auth.GetAccessToken(AuthCode, ResponseState);
 
-                if (Token.access_token != null && Token.refresh_token != null)
+                if (Token.access_token != null && Token.refresh_token != null && Token.expires_in != null)
                 {
-                    await cookie.SetValueAsync<string>("access_token", Token.access_token);
-                    await cookie.SetValueAsync<string>("refresh_token", Token.refresh_token);
-                    BeginCanvasOAuth();
+                    await cookie.SetValueAsync<string>("azure_access_token", Token.access_token, Token.expires_in);
+                    await cookie.SetValueAsync<string>("azure_refresh_token", Token.refresh_token, (24 * 60 * 60));
+                    CheckCanvasAuthStatus(Token.access_token);
                 }
             } 
             catch (Exception ex)
@@ -51,9 +51,28 @@
         } 
         else
         {
-
-
             Console.WriteLine("Auth Code or Response State is Null!");
+        }
+    }
+
+    public async void CheckCanvasAuthStatus(string AzureToken)
+    {
+        string? accessToken = await cookie.GetValueAsync<string>("canvas_access_token");
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            string? refreshToken = await cookie.GetValueAsync<string>("canvas_refresh_token");
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                BeginCanvasOAuth();
+            }
+            else
+            {
+                var Token = await canvasAuthAPI.RefreshAccessTokenAsync(refreshToken, AzureToken);
+            }
+        }
+        else
+        {
+            Nav.NavigateTo("/home");
         }
     }
 

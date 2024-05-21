@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using TokenTestingBlazor.Client.Models;
 using TokenTestingBlazor.Models;
@@ -16,6 +15,7 @@ namespace TokenTestingBlazor
         private readonly string oAuthClientID;
         private readonly string redirectURI;
         private readonly string cosmosURI;
+        private readonly string tokenURI;
 
         private readonly HttpClient client;
         public CanvasOAuth(IConfiguration Config) 
@@ -24,6 +24,7 @@ namespace TokenTestingBlazor
             oAuthClientID = Config["Canvas:client_id"] ?? throw new ArgumentNullException(nameof(oAuthClientID));
             redirectURI = Config["Canvas:redirect_uri"] ?? throw new ArgumentNullException(nameof(redirectURI));
             cosmosURI = Config["Azure:cosmos_uri"] ?? throw new ArgumentNullException(nameof(redirectURI));
+            tokenURI = Config["Canvas:token_uri"] ?? throw new ArgumentNullException(nameof(tokenURI));
         }
 
         /// <summary>
@@ -34,8 +35,7 @@ namespace TokenTestingBlazor
         /// <returns>A DTO containing the Canvas Access Token</returns>
         public async Task<ServerCanvasTokenDTO> GetCanvasTokenAsync(string authCode, string dbToken)
         {
-            //Canvas Auth URI (davistech.instructure.com)
-            var endpoint = new Uri("https://davistech.instructure.com/login/oauth2/token");
+            var endpoint = new Uri(tokenURI);
 
             string client_secret = await GetClientSecretAsync(dbToken);
 
@@ -56,6 +56,34 @@ namespace TokenTestingBlazor
 
             
             return JsonSerializer.Deserialize<ServerCanvasTokenDTO>(response.Content.ReadAsStream());
+        }
+
+        /// <summary>
+        /// Refreshes the Canvas Access Token
+        /// </summary>
+        /// <param name="refreshToken"></param>
+        /// <param name="dbToken"></param>
+        /// <returns></returns>
+        public async Task<ServerCanvasRefreshDTO> RefreshCanvasTokenAsync(string refreshToken, string dbToken)
+        {
+            var endpoint = new Uri(tokenURI);
+            string client_secret = await GetClientSecretAsync(dbToken);
+
+            var values = new Dictionary<string, string>()
+            {
+                {"grant_type", "refresh_token" },
+                {"client_id", oAuthClientID },
+                { "client_secret", client_secret },
+                { "redirect_uri", redirectURI },
+                { "refresh_token", refreshToken },
+            };
+
+            var requestContent = new FormUrlEncodedContent(values);
+
+            var response = await client.PostAsync(endpoint.ToString(), requestContent);
+            response.EnsureSuccessStatusCode();
+
+            return JsonSerializer.Deserialize<ServerCanvasRefreshDTO>(response.Content.ReadAsStream());
         }
 
         /// <summary>
@@ -93,9 +121,11 @@ namespace TokenTestingBlazor
 
         public record CosmosDBDocumentList
         {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
             public string _rid { get; set; }
             public int _count { get; set; }
             public CosmosDBDocument[] Documents { get; set; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable. 
         }
 
         //JSON should be
@@ -108,6 +138,7 @@ namespace TokenTestingBlazor
          */
         public record CosmosDBDocument
         {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
             public string id { get; set; }
             public string client_id { get; set; }
             public string client_secret { get; set; }
@@ -116,6 +147,7 @@ namespace TokenTestingBlazor
             public string _etag { get; set; }
             public int _ts { get; set; }
             public string _attachments { get; set; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.        
         }
 
     }

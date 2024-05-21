@@ -14,12 +14,13 @@ namespace TokenTestingBlazor.Client
     /// </summary>
     public class AzureOAuth
     {
-        
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
         /// <summary>
         /// The Directory (tenant) ID of the registered Entra ID application
         /// </summary>
         private static string tenant;
-        
+
         /// <summary>
         /// The Application (client) ID of the registered Entra ID application
         /// </summary>
@@ -34,7 +35,8 @@ namespace TokenTestingBlazor.Client
         /// The URI of the CosmosDB Instance
         /// </summary>
         private static string cosmosURI;
-
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        
         private HttpClient client;
 
         public AzureOAuth(IConfiguration Config) 
@@ -97,6 +99,25 @@ namespace TokenTestingBlazor.Client
             
         }
 
+        public async Task<TokenDTO> RefreshAccessToken(string refreshToken)
+        {
+            var endpoint = new Uri($"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token");
+
+            var values = new Dictionary<string, string>
+            {
+                {"client_id", client_id },
+                { "grant_type", "refresh_token" },
+                { "refresh_token", refreshToken },
+                { "scope", $"{cosmosURI}.default" },
+            };
+
+            var requestContent = new FormUrlEncodedContent(values);
+
+            var response = await client.PostAsync(endpoint.ToString(), requestContent);
+            response.EnsureSuccessStatusCode();
+
+            return JsonSerializer.Deserialize<TokenDTO>(response.Content.ReadAsStream());
+        }
 
         /// <summary>
         /// Creates the PKCE key used for authorization
