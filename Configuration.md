@@ -15,3 +15,6 @@ All of these values need to be configured in two location:
 `TokenTestingBlazor.Client/wwwroot/appsettings.json` for the Client
 
 `TokenTestingBlazor/appsettings.json` for the Server
+
+Currently, there is an `appsettings.template.json` file at both locations, rename that to `appsettings.json`.
+This is so your config file is ignored by git and won't be tracked.

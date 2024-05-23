@@ -6,6 +6,7 @@
 
 @inject HttpClient client
 @inject CookieStorageAccessor cookie
+@inject CanvasAuthAccessor canvasAuth
 
 <h3>CanvasCallback</h3>
 
@@ -21,22 +22,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        string AzureToken = await cookie.GetValueAsync<string>("azure_access_token");
-        
-        if (AzureToken != null && AuthCode != null)
+        if (AuthCode != null)
         {
             try
             {
-                //Configure this endpoint to whatever domain this is running on
-                var apiEndpoint = "http://localhost:3000/api/auth/getToken?code=" + AuthCode;
-                
-                client.DefaultRequestHeaders.Clear();
-                client.DefaultRequestHeaders.Add("AzureToken", AzureToken);
-                
-                var response = await client.GetAsync(apiEndpoint);
-                
-                var Token = JsonSerializer.Deserialize<CanvasTokenDTO>(response.Content.ReadAsStream());
-                
+                var Token = await canvasAuth.GetAccessTokenAsync(AuthCode);
+
                 await cookie.SetValueAsync<string>("canvas_access_token", Token.access_token, Token.expires_in); 
                 await cookie.SetValueAsync<string>("canvas_refresh_token", Token.refresh_token, Int32.MaxValue);
                 Response = "Canvas Token Aquired! Check your cookies.";
@@ -50,8 +41,5 @@
         {
             Response = "This page has been accessed in error!";
         }
-
-        
-        
     }
 }

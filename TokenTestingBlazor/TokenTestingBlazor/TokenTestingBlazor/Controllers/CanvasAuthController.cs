@@ -25,14 +25,14 @@ namespace TokenTestingBlazor.Controllers
         /// <param name="AzureToken">CosmosDB Access Token</param>
         /// <returns>Canvas Access Token</returns>
         [HttpGet("getToken")]
-        public async Task<ActionResult<ServerCanvasTokenDTO>> GetCanvasToken(string code, [FromHeader] string AzureToken)
+        public async Task<ActionResult<ServerCanvasTokenDTO>> GetCanvasToken(string code)
         {
             if (string.IsNullOrEmpty(code))
             {
                 return NotFound();
             }
 
-            var token = await _canvasAuth.GetCanvasTokenAsync(code, AzureToken);
+            var token = await _canvasAuth.GetCanvasTokenAsync(code);
             return Ok(token);
         }
 
@@ -44,14 +44,14 @@ namespace TokenTestingBlazor.Controllers
         /// <param name="AzureToken">CosmosDB Access Token</param>
         /// <returns>Canvas Access Token</returns>
         [HttpGet("refreshToken")]
-        public async Task<ActionResult<ServerCanvasRefreshDTO>> RefreshCanvasToken([FromHeader] string refresh_token, [FromHeader] string AzureToken)
+        public async Task<ActionResult<ServerCanvasRefreshDTO>> RefreshCanvasToken([FromHeader] string? refresh_token)
         {
-            if (string.IsNullOrEmpty(refresh_token) || string.IsNullOrEmpty(AzureToken))
+            if (refresh_token == null)
             {
                 return NotFound();
             }
             
-            var token = await _canvasAuth.RefreshCanvasTokenAsync(refresh_token, AzureToken);
+            var token = await _canvasAuth.RefreshCanvasTokenAsync(refresh_token);
             return Ok(token);
         }
     }

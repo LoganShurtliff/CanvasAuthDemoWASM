@@ -62,7 +62,7 @@ else
             } 
             else
             {
-                var Token = await canvasAuthAPI.RefreshAccessTokenAsync(canvasRefreshToken, azureToken);
+                var Token = await canvasAuthAPI.RefreshAccessTokenAsync(canvasRefreshToken);
                 await cookie.SetValueAsync<string>("canvas_access_token", Token.access_token, Token.expires_in);
                 CanvasAuth = true;
             }
