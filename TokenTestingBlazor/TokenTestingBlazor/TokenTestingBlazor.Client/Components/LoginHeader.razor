@@ -1,5 +1,8 @@
 ﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
+@*Wrap this around a page to include the login header*@
+@*This is the default blazor header, but moved to the client side so it can access cookies to check the login state*@
+
 @inject CookieStorageAccessor cookie
 
 <div class="top-row px-4">

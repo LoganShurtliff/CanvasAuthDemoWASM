@@ -1,5 +1,7 @@
 ﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
+@*Wrap this component around a page to redirect the user if they aren't logged in, ensuring that in typical use, if a user is accessing said page, they are logged in*@
+
 @inject CookieStorageAccessor cookie
 @inject NavigationManager Nav
 @inject HttpClient client

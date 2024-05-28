@@ -4,17 +4,25 @@ using TokenTestingBlazor.Client.Models;
 
 namespace TokenTestingBlazor.Client
 {
+    /// <summary>
+    /// Class to access the server side API for canvas authentication
+    /// </summary>
     public class CanvasAuthAccessor
     {
         private HttpClient _client;
         private readonly string authEndpoint;
-        private readonly string domain = "http://localhost:3000";
+        private readonly string domain = "http://localhost:3000"; //Change this for production envrionments
         public CanvasAuthAccessor(IConfiguration Config) 
         {
             _client = new HttpClient();
             authEndpoint = Config["Canvas:auth_uri"] ?? throw new ArgumentNullException(nameof(authEndpoint));
         }
 
+        /// <summary>
+        /// Retrives the access token given an authorization code using the serverside API
+        /// </summary>
+        /// <param name="AuthCode">Canvas authentication code</param>
+        /// <returns>The canvas access token</returns>
         public async Task<CanvasTokenDTO> GetAccessTokenAsync(string AuthCode)
         {
             var apiEndpoint = domain + "/api/auth/getToken?code=" + AuthCode;
@@ -26,6 +34,11 @@ namespace TokenTestingBlazor.Client
             return JsonSerializer.Deserialize<CanvasTokenDTO>(response.Content.ReadAsStream());
         }
 
+        /// <summary>
+        /// Refreshes a Canvas Token using the serverside API
+        /// </summary>
+        /// <param name="RefreshToken">Canvas Refresh Token</param>
+        /// <returns>The refreshed Access Token</returns>
         public async Task<CanvasTokenDTO> RefreshAccessTokenAsync(string RefreshToken)
         {
             var apiEndpoint = domain + "/api/auth/refreshToken";
@@ -38,6 +51,11 @@ namespace TokenTestingBlazor.Client
             return JsonSerializer.Deserialize<CanvasTokenDTO>(response.Content.ReadAsStream());
         }
 
+        /// <summary>
+        /// Logs a user out of the canvas session
+        /// </summary>
+        /// <param name="AccessToken">User's canvas Access Token</param>
+        /// <returns>An async Task</returns>
         public async Task CanvasLogout(string AccessToken)
         {
             string apiEndpoint = domain + "/api/auth/canvasLogout";

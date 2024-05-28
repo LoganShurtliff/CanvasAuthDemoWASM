@@ -13,10 +13,10 @@ namespace TokenTestingBlazor
     /// </summary>
     public class CanvasOAuth
     {
+        //Values from appsettings.json
         private readonly string oAuthClientID;
         private readonly string oAuthClientSecret;
         private readonly string redirectURI;
-        private readonly string cosmosURI;
         private readonly string tokenURI;
 
         private readonly HttpClient client;
@@ -26,7 +26,6 @@ namespace TokenTestingBlazor
             oAuthClientID = Config["Canvas:client_id"] ?? throw new ArgumentNullException(nameof(oAuthClientID));
             oAuthClientSecret = Config["Canvas:client_secret"] ?? throw new ArgumentNullException(nameof(oAuthClientSecret));
             redirectURI = Config["Canvas:redirect_uri"] ?? throw new ArgumentNullException(nameof(redirectURI));
-            cosmosURI = Config["Azure:cosmos_uri"] ?? throw new ArgumentNullException(nameof(redirectURI));
             tokenURI = Config["Canvas:token_uri"] ?? throw new ArgumentNullException(nameof(tokenURI));
         }
 
@@ -84,6 +83,11 @@ namespace TokenTestingBlazor
             return JsonSerializer.Deserialize<ServerCanvasRefreshDTO>(response.Content.ReadAsStream());
         }
 
+        /// <summary>
+        /// Logs the user out of canvas
+        /// </summary>
+        /// <param name="AccessToken">User's access token</param>
+        /// <returns>A boolean indicating if the user was successfully logged out</returns>
         public async Task<bool> CanvasLogout(string AccessToken)
         {
             var endpoint = tokenURI + "?access_token=" + AccessToken;

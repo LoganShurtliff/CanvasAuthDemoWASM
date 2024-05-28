@@ -124,7 +124,7 @@ namespace TokenTestingBlazor.Client
         /// </summary>
         /// <param name="size">Length of the key</param>
         /// <returns>The hashed key and the value used to verify the key</returns>
-        public static (string code_challenge, string verifier) Generate(int size = 43)
+        private static (string code_challenge, string verifier) Generate(int size = 43)
         {
             using var rng = RandomNumberGenerator.Create();
             var randomBytes = new byte[size];

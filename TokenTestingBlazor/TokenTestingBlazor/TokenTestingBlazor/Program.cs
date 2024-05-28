@@ -8,7 +8,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddSingleton<CanvasOAuth>();
+builder.Services.AddSingleton<CanvasOAuth>(); //Inject the CanvasOAuth service
 builder.Services.AddControllers();
 
 var app = builder.Build();

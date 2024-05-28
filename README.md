@@ -32,3 +32,8 @@ If a page doesn't use the `<Auth />` component, make sure to use the `<LoginHead
 ## Setup
 
 To get this project working see [Azure Setup](AzureSetup.md) and [Project Configuration](Configuration.md)
+
+
+## Contribution
+
+See [Contribution.md](Contribution.md) about the current state of the project and how to add on to it.

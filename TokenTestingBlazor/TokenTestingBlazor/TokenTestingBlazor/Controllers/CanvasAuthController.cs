@@ -55,6 +55,12 @@ namespace TokenTestingBlazor.Controllers
             return Ok(token);
         }
 
+        //DELETE: api/auth/canvasLogout
+        /// <summary>
+        /// Logs a user out of canvas
+        /// </summary>
+        /// <param name="access_token">Canvas Access Token which will be deleted in the logout process</param>
+        /// <returns></returns>
         [HttpDelete("canvasLogout")]
         public async Task<ActionResult> CanvasLogout([FromHeader] string? access_token)
         {

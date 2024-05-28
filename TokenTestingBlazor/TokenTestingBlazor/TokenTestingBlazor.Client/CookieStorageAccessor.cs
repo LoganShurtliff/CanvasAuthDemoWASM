@@ -70,6 +70,11 @@ namespace TokenTestingBlazor.Client
             await _jsRuntime.InvokeVoidAsync("eval", $"document.cookie = \"{cookieVal}\"");
         }
 
+        /// <summary>
+        /// Deletes a cookie
+        /// </summary>
+        /// <param name="key">Key of the cookie to delete</param>
+        /// <returns>An async Task</returns>
         public async Task DeleteValueAsync(string key)
         {
             string cookieVal = $"{key}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
