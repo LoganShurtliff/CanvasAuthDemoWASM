@@ -15,17 +15,20 @@ I. CosmosDB
 	
 	A. Open a new Azure Command Line
 	
-	B. Run `code .` to open a text editor
+	B. Run `code .` to open a text editor (If asked to open a classic shell, choose 'Yes')
 	
 	C. In a new file create `role-definition-rw.json` (see below)
+
+	Note there is a hidden menu in the top right of the text editor to save a the file
 	
 	D. In another file create the `createRole.sh` script using your resource group and CosmosDB account name
 	
 	E. Run the script using `bash createRole.sh`
 	
-	F. Get the **roleDefinitionId** for the role you just created by running 
-		`az cosmosdb sql role definition list --account-name $accountName -g $resourceGroupName`
-		and substituting `$accountName` and `$resourceGroupName` for their correspong values
+	F. Get the **roleDefinitionId** for the role you just created.
+	
+	This should be in the name property of the JSON object outputted by running the previous script, but if not it can be found by running 
+		`az cosmosdb sql role definition list --account-name yourCosmosAccount -g yourResourceGroup`
 	
 	G. Note down the **roleDefinitionId** which can be found in the name property.
 	
@@ -39,12 +42,15 @@ II. App Registration
 This is needed for the Authorization using Microsoft EntraID.
 
 1. In the Microsoft EntraID portal -> App registrations hit NEW REGISTRATION and enter an application name and hit register.
-2. Note down the Application (client) ID and the Directory (tenant) ID.
-3. Under the app registration -> Manage -> Authentication hit **Add a platform** and choose **Single-page application**, giving it the redirect URL you want to use - then hit **Configure**.
-4. Configure AzureOAuth.cs with the tenant ID, client ID and the redirect URI
+2. Note down the Application (client) ID and the Directory (tenant) ID to configure in `appsettings.json`.
+3. Under the app registration -> Manage -> Authentication hit **Add a platform** and choose **Single-page application**, giving it the redirect URL (e.g. `http://localhost:3000/callback`) you want to use - then hit **Configure**.
+4. Under the app registration -> Manage -> API permissions choose **Add a permission** and choose Azure Cosmos DB. Select that it is a delegated permission, and you specifically want `user_impersonation`, then hit add permission.
+5. Configure `appsettings.json` with the tenant ID, client ID and the redirect URI
 
 
+III. Finish Configuring `appsettings.json` with all the canvas information, on both client and server.
 
+**Important!** Make sure the visual studio project is configured to use http not https
 
 
 External Files for configuring permissions:

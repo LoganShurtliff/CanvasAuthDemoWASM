@@ -3,6 +3,7 @@ This is just a proof of concept.
 
 Various things need to be configured in this project, including:
 - Canvas OAuth Client ID
+- Canvas OAuth Client Secret
 - Canvas Redirect URI
 - Canvas Auth URI (If using different Canvas Domain)
 - Azure tenant ID
