@@ -4,6 +4,7 @@ Steps to setup in Azure -
 
 I. CosmosDB
 
+
 1. Create a CosmosDB instance (NoSQL)
 2. Copy the instance URI and configure that in `appsettings.json` (See [Configuration](Configuration.md))
 3. In the CosmosDB instance under Settings -> CORS add the domain of the site to the list of allowed origins (e.g. "http://localhost:3000")
