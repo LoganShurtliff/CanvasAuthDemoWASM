@@ -51,11 +51,29 @@ namespace TokenTestingBlazor.Client
         /// <typeparam name="T">Type of data being stored in the cookie</typeparam>
         /// <param name="key">Key of the cookie</param>
         /// <param name="value">Data to store in a cookie</param>
+        /// <param name="expires_in">How many seconds the cookie should last</param>
         /// <returns>An async Task</returns>
-        public async Task SetValueAsync<T>(string key, T value)
+        public async Task SetValueAsync<T>(string key, T value, int? expires_in)
         {
-            await WaitForReference();
-            await _accessorJsRef.Value.InvokeVoidAsync("set", key, value);
+            string cookieVal;
+            if (expires_in.HasValue)
+            {
+                //expires_in is in seconds
+                var expirary_date = DateTime.UtcNow.AddSeconds(Convert.ToDouble(expires_in)).ToString("r");
+                cookieVal = $"{key}={value}; expires={expirary_date}; path=/";
+            } 
+            else
+            {
+                cookieVal = $"{key}={value}; path=/";
+            }
+            
+            await _jsRuntime.InvokeVoidAsync("eval", $"document.cookie = \"{cookieVal}\"");
+        }
+
+        public async Task DeleteValueAsync(string key)
+        {
+            string cookieVal = $"{key}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            await _jsRuntime.InvokeVoidAsync("eval", $"document.cookie = \"{cookieVal}\"");
         }
     }
 }

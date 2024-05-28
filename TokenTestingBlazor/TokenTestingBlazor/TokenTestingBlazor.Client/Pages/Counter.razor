@@ -1,5 +1,9 @@
 ﻿@page "/counter"
-@rendermode InteractiveAuto
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@using TokenTestingBlazor.Client.Components
+
+<Auth>
 
 <PageTitle>Counter</PageTitle>
 
@@ -9,6 +13,7 @@
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
+</Auth>
 @code {
     private int currentCount = 0;
 

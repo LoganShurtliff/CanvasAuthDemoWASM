@@ -1,4 +1,4 @@
-﻿@page "/test"
+﻿@page "/login"
 @*Automatically begins the Authentication process*@
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
@@ -10,14 +10,14 @@
 
     public async void GetToken()
     {
-        string? Token = await cookie.GetValueAsync<string>("access_token");
+        string? Token = await cookie.GetValueAsync<string>("azure_access_token");
         if (Token == null)
         {
             auth.GetAuthCode(Nav);
         }
         else
         {
-            Nav.NavigateTo("/database");
+            Nav.NavigateTo("/callback");
         }
     }
 

@@ -1,13 +1,12 @@
 Documentation to access CosmosDB from a client side BlazorWASM
 
-Code is documented - main components are the `Callback.razor`, `DatabaseAPIService.cs`, and `AzureOAuth.cs` files.
-
 Steps to setup in Azure - 
 
 I. CosmosDB
 
-1. Create a CosmosDB instance
-2. Copy the instance URI and configure that in `appsettings.json` (See [Configuration Page](Configuration.md))
+
+1. Create a CosmosDB instance (NoSQL)
+2. Copy the instance URI and configure that in `appsettings.json` (See [Configuration](Configuration.md))
 3. In the CosmosDB instance under Settings -> CORS add the domain of the site to the list of allowed origins (e.g. "http://localhost:3000")
 4. Configure Permissions
 	
@@ -16,7 +15,7 @@ I. CosmosDB
 	
 	A. Open a new Azure Command Line
 	
-	B. Run `code .` to open a new file editor (Replace "." with the file name of the file you want to create)
+	B. Run `code .` to open a text editor
 	
 	C. In a new file create `role-definition-rw.json` (see below)
 	
@@ -33,19 +32,7 @@ I. CosmosDB
 	H. Create the `applyRole.sh` script as seen below, configuring the values as seen below. The object ID you wish to assign to can be accessed via Microsoft Entra ID -> Users -> (YourUser) -> Overview
 
 	I. Run the script using `bash applyRole.sh`
-5. Create the Data
 
-	A. Under the CosmosDB instance, in the Data Explorer create a new database (`test_db` is what I used) and a collection called `oauth`
-	
-	B. This collection should have only 1 document, with an `id` of 0, looking like so:
-
-	```json
-	{
-    "id": "0",
-    "client_id": "YourCanvasClientIDHere",
-    "client_secret": "YourCanvasClientSecretHere",
-    }
-	```
 
 
 II. App Registration

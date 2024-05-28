@@ -6,10 +6,10 @@
 
 @inject HttpClient client
 @inject CookieStorageAccessor cookie
+@inject CanvasAuthAccessor canvasAuth
+@inject NavigationManager Nav
 
-<h3>CanvasCallback</h3>
-
-<p>@Response</p>
+@Response
 
 @code {
     [Parameter]
@@ -21,45 +21,24 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("Callback page initialized async");
-        string AzureToken = await cookie.GetValueAsync<string>("access_token");
-        Console.WriteLine("Cookie has been accessed");
-        if (AzureToken != null)
+        if (AuthCode != null)
         {
-            if (AuthCode != null)
+            try
             {
-                try
-                {
-                    //Configure this endpoint to whatever domain this is running on
-                    var apiEndpoint = "http://localhost:3000/api/auth/getToken?code=" + AuthCode;
+                var Token = await canvasAuth.GetAccessTokenAsync(AuthCode);
 
-                    client.DefaultRequestHeaders.Clear();
-                    client.DefaultRequestHeaders.Add("AzureToken", AzureToken);
-
-                    var response = await client.GetAsync(apiEndpoint);
-
-                    var Token = JsonSerializer.Deserialize<CanvasTokenDTO>(response.Content.ReadAsStream());
-                    Console.WriteLine("Token" + Token);
-                    await cookie.SetValueAsync<string>("canvas_access_token", Token.access_token); //These cookies have a path of /api/auth/callback becuase it puts it in the parent directory (Setting the cookie domain / path isn't working for some reason) 
-                    await cookie.SetValueAsync<string>("canvas_refresh_token", Token.refresh_token); //A fix for this is to use a path in the root directory, eg /CanvasCallback so they are scoped to the entire domain
-                    Response = "Canvas Token Aquired! Check your cookies.";
-                }
-                catch (Exception ex)
-                {
-                    Response = ex.Message;
-                }
+                await cookie.SetValueAsync<string>("canvas_access_token", Token.access_token, Token.expires_in); 
+                await cookie.SetValueAsync<string>("canvas_refresh_token", Token.refresh_token, Int32.MaxValue);
+                Nav.NavigateTo("/");
             }
-            else
+            catch (Exception ex)
             {
-                Response = "This page has been accessed in error!";
+                Response = ex.Message;
             }
         }
         else
         {
             Response = "This page has been accessed in error!";
         }
-
-        
-        
     }
 }
