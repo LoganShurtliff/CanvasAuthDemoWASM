@@ -78,6 +78,7 @@
             {
                 var Token = await canvasAuthAPI.RefreshAccessTokenAsync(refreshToken);
                 await cookie.SetValueAsync<string>("canvas_access_token", Token.access_token, Token.expires_in);
+                Nav.NavigateTo("/");
             }
         }
         else
@@ -91,7 +92,8 @@
         string redirectURI = Config["Canvas:redirect_uri"] ?? throw new ArgumentNullException(nameof(redirectURI));
         string endpoint = Config["Canvas:auth_uri"] ?? throw new ArgumentNullException(nameof(endpoint));
         string oAuthClientID = Config["Canvas:client_id"] ?? throw new ArgumentNullException(nameof(oAuthClientID));
-        
+
+        endpoint += "auth?";
         endpoint += $"client_id={oAuthClientID}";
         endpoint += "&response_type=code";
         endpoint += $"&redirect_uri={redirectURI}";

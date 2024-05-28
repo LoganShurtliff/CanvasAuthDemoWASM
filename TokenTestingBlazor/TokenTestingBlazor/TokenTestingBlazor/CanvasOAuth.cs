@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
 using TokenTestingBlazor.Client.Models;
@@ -81,6 +82,15 @@ namespace TokenTestingBlazor
             response.EnsureSuccessStatusCode();
 
             return JsonSerializer.Deserialize<ServerCanvasRefreshDTO>(response.Content.ReadAsStream());
+        }
+
+        public async Task<bool> CanvasLogout(string AccessToken)
+        {
+            var endpoint = tokenURI + "?access_token=" + AccessToken;
+
+            var response = await client.DeleteAsync(endpoint);
+
+            return response.IsSuccessStatusCode;
         }
 
     }

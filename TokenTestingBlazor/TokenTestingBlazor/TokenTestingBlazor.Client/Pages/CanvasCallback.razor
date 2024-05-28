@@ -7,10 +7,9 @@
 @inject HttpClient client
 @inject CookieStorageAccessor cookie
 @inject CanvasAuthAccessor canvasAuth
+@inject NavigationManager Nav
 
-<h3>CanvasCallback</h3>
-
-<p>@Response</p>
+@Response
 
 @code {
     [Parameter]
@@ -30,7 +29,7 @@
 
                 await cookie.SetValueAsync<string>("canvas_access_token", Token.access_token, Token.expires_in); 
                 await cookie.SetValueAsync<string>("canvas_refresh_token", Token.refresh_token, Int32.MaxValue);
-                Response = "Canvas Token Aquired! Check your cookies.";
+                Nav.NavigateTo("/");
             }
             catch (Exception ex)
             {

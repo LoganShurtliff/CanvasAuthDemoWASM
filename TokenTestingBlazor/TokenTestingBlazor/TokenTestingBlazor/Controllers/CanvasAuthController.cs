@@ -54,5 +54,24 @@ namespace TokenTestingBlazor.Controllers
             var token = await _canvasAuth.RefreshCanvasTokenAsync(refresh_token);
             return Ok(token);
         }
+
+        [HttpDelete("canvasLogout")]
+        public async Task<ActionResult> CanvasLogout([FromHeader] string? access_token)
+        {
+            if (access_token == null)
+            {
+                return NotFound();
+            }
+
+            bool success = await _canvasAuth.CanvasLogout(access_token);
+            if (success)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
     }
 }

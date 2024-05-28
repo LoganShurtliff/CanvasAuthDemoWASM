@@ -9,6 +9,7 @@
 @using System.Text.Json
 @using TokenTestingBlazor.Client.Models
 
+<LoginHeader>
 
 @if (AzureAuth && CanvasAuth)
 {
@@ -18,6 +19,8 @@ else
 {
     <p>Loading...</p>
 }
+
+</LoginHeader>
 
 @code {
     [Parameter]
@@ -34,7 +37,7 @@ else
             string? azureRefreshToken = await cookie.GetValueAsync<string>("azure_refresh_token");
             if (string.IsNullOrEmpty(azureRefreshToken))
             {
-                Nav.NavigateTo("/test"); //There is no Azure Access or refresh token, thus begin login attempt
+                Nav.NavigateTo("/login"); //There is no Azure Access or refresh token, thus begin login attempt
             }
             else
             {
@@ -58,7 +61,7 @@ else
             string? canvasRefreshToken = await cookie.GetValueAsync<string>("canvas_refresh_token");
             if (string.IsNullOrEmpty(canvasRefreshToken))
             {
-                Nav.NavigateTo("/test");
+                Nav.NavigateTo("/login");
             } 
             else
             {
