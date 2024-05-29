@@ -11,11 +11,12 @@ namespace TokenTestingBlazor.Client
     {
         private HttpClient _client;
         private readonly string authEndpoint;
-        private readonly string domain = "http://localhost:3000"; //Change this for production envrionments
+        private readonly string domain;
         public CanvasAuthAccessor(IConfiguration Config) 
         {
             _client = new HttpClient();
             authEndpoint = Config["Canvas:auth_uri"] ?? throw new ArgumentNullException(nameof(authEndpoint));
+            domain = Config["Domain"] ?? throw new ArgumentNullException($"{nameof(domain)}");
         }
 
         /// <summary>
